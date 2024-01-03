@@ -34,6 +34,8 @@ typedef struct {
     uint8_t gyroConfig;
 } MPU6050_ConfigTypeDef;
 
+
+
 // Errors enumeration
 typedef enum {
     INIT_OK = 0,
