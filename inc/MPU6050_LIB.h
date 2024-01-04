@@ -100,7 +100,6 @@ typedef struct {
     int16_t zOffset;
 } MPU6050_GyroOffsets;
 
-
 // Errors enumeration
 typedef enum {
     INIT_OK = 0,
@@ -374,6 +373,7 @@ uint8_t MPU6050_Init(MPU6050_ConfigTypeDef *config);
 uint8_t MPU6050_Test_Conn(MPU6050_ConfigTypeDef *config);
 uint8_t MPU6050_GetAcceleration(MPU6050_ConfigTypeDef *config, MPU6050_Accelerations *accel);
 uint8_t MPU6050_GetRotation(MPU6050_ConfigTypeDef *config, MPU6050_Rotations *rota);
+uint8_t MPU6050_GetAccelOffset(MPU6050_ConfigTypeDef *config, MPU6050_AccelOffsets *accelOff);
 
 // FUNCTIONS LIKE-MACROS
 #define MPU6050_RAW_TO_F_DATA(rawData, lsbSen) ( ((float)(rawData)/(float)(lsbSen)) * GRAVITY_ACCEL)
