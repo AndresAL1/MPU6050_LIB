@@ -52,14 +52,16 @@
 
 // MPU6050 Configuration structure
 typedef struct {
-    I2C_HandleTypeDef *hi2c;
-    uint8_t address;
-    uint8_t dlpfFsyncConfig;
-    uint8_t smplRateDivConfig;	// S_RATE = GYRO_OUTPUT_RATE / (1 + SMPLRT_DIV)
-    uint8_t pwrMgmt1Config;
-    uint8_t pwrMgmt2Config;
-    uint8_t accelConfig;
-    uint8_t gyroConfig;
+    I2C_HandleTypeDef *hi2c;		// I2C interface used
+    uint8_t address;				// I2C address chosen
+
+    								// Registers written with these values
+    uint8_t dlpfFsyncConfig;		// REG_CONFIG
+    uint8_t smplRateDivConfig;		// REG_SMPLRT_DIV
+    uint8_t pwrMgmt1Config;			// REG_PWR_MGMT_1
+    uint8_t pwrMgmt2Config;			// REG_PWR_MGMT_2
+    uint8_t accelConfig;			// REG_ACCEL_CONFIG
+    uint8_t gyroConfig;				// REG_GYRI_CONFIG
 } MPU6050_ConfigTypeDef;
 
 // MPU6050 Acceleration Data structure
@@ -106,32 +108,36 @@ typedef enum {
 	ERR_CONFIG_GYRO
 } ConfigurationError;
 
-// Definitions of configuration parameters and constants
+// Parameters and constants
 #define GRAVITY_ACCEL			9.80665f // m/s^2
 
-										 // LSB/g
-#define ACCEL_LSB_SEN_0			16384
+#define ACCEL_LSB_SEN_0			16384	// LSB/g
 #define ACCEL_LSB_SEN_1			8192
 #define ACCEL_LSB_SEN_2			4096
 #define ACCEL_LSB_SEN_3			2048
 
-#define GET_ACCEL_FS_CONFIG		0b00011000
+#define GET_ACCEL_FS_CONFIG		0b00011000	// BitMask to get AFS bits
 
-										// LSB/º/S
-#define GYRO_LSB_SEN_0			131.0f
+#define GYRO_LSB_SEN_0			131.0f	// LSB/º/S
 #define GYRO_LSB_SEN_1			65.5f
 #define GYRO_LSB_SEN_2			32.8f
 #define GYRO_LSB_SEN_3			16.4f
 
-#define GET_GYRO_FS_CONFIG		0b00011000
+#define GET_GYRO_FS_CONFIG		0b00011000	// BitMask to get GFS bits
+/********END OF PARAMETERS AND CONSTANTS*********/
+
+// Definitions of configuration values
 
 // I2C Configuration
 #define MPU6050_TIMEOUT_MS		100
 
 // MPU6050 Configuration
+
+// I2C address is chosen by the logical state of AD0
 #define MPU6050_ADDRESS_AD0_L	0x68	// AD0 = 0
 #define MPU6050_ADDRESS_AD0_H	0x69	// AD0 = 1
 
+// Configuration values for register REG_CONFIG
 											// FSYNC BIT LOCATION
 #define FSYNC_CONFIG_0			0b000000	// INPUT DISABLED
 #define FSYNC_CONFIG_1			0b001000	// TEMP_OUT_L[0]
@@ -151,8 +157,16 @@ typedef enum {
 #define DLPF_CONFIG_5			0b000101	// 13.8 : 13.4 : 1000
 #define DLPF_CONFIG_6			0b000110	// 19.0 : 18.6 : 1000
 
+/*******************END OF REG_CONFIG CONFIGURATION VALUES****************/
+
+// NOTE: SMPLRT_DIV REGISTER IS CONFIGURED BY A 8-BITS UNSIGNED INTEGER
+// S_RATE = GYRO_OUTPUT_RATE / (1 + SMPLRT_DIV)
+
+// Configuration values for register REG_PWR_MGMT_1
+
 #define CYCLE_CONFIG_SET		0b00100000	// CYCLE MODE ENABLED
 #define TEMP_DIS_CONFIG_SET		0b00001000  // TEMP SENSOR DISABLED
+
 #define CLKSEL_CONFIG_0			0b00000000  // INTERNAL 8MHz OSC
 #define CLKSEL_CONFIG_1			0b00000001  // PLL WITH X AXIS GYRO REF
 #define CLKSEL_CONFIG_2			0b00000010	// PLL WITH Y AXIS GYRO REF
@@ -161,13 +175,17 @@ typedef enum {
 #define CLKSEL_CONFIG_5			0b00000101	// PLL WITH EXT 19.2MHz OSC
 #define CLKSEL_CONFIG_7			0b00000111  // TIMING GENERATOR IN RESET
 
+/***************END OF REG_PWR_MGMT_1 CONFIGURATION VALUES*************/
+
+// Configuration values for register REG_PWR_MGMT_2
+
 											// WAKE UP FREQUENCY (Hz)
 #define LP_WAKE_CTRL_CONFIG_0	0b00000000	// 1.25
 #define LP_WAKE_CTRL_CONFIG_1	0b01000000	// 5.00
 #define LP_WAKE_CTRL_CONFIG_2	0b10000000	// 20.0
 #define LP_WAKE_CTRL_CONFIG_3	0b11000000	// 40.0
 
-/*  NOTE: The MPU-6050 can be put into Accelerometer Only Low Power Mode using the following steps:
+/*  NOTE: The MPU6050 can be put into Accelerometer Only Low Power Mode using the following steps:
 	(i) Set CYCLE bit to 1
 	(ii) Set SLEEP bit to 0
 	(iii) Set TEMP_DIS bit to 1
@@ -177,9 +195,14 @@ typedef enum {
 #define STBY_XA_CONFIG_SET		0b00100000
 #define STBY_YA_CONFIG_SET		0b00010000
 #define STBY_ZA_CONFIG_SET		0b00001000
+
 #define STBY_XG_CONFIG_SET		0b00000100
 #define STBY_YG_CONFIG_SET		0b00000010
 #define STBY_ZG_CONFIG_SET		0b00000001
+
+/*****************END OF REG_PWR_MGMT_2 CONFIGURATION VALUES************************************/
+
+// Configuration values for register REG_ACCEL_CONFIG
 
 											// AFS_SEL:FS_RANGE:LSB SENSITIVITY
 #define ACCEL_CONFIG_SCALE_0	0b00000000  // 0:+-2g:16384LSB/g
@@ -187,18 +210,25 @@ typedef enum {
 #define ACCEL_CONFIG_SCALE_2	0b00010000  // 2:+-8g:4096LSB/g
 #define ACCEL_CONFIG_SCALE_3	0b00011000  // 3:+-16g:2048LSB/g
 
-#define ACCEL_CONFIG_STEST_X	0b10000000
+#define ACCEL_CONFIG_STEST_X	0b10000000	// Self test enables
 #define ACCEL_CONFIG_STEST_Y	0b01000000
 #define ACCEL_CONFIG_STEST_Z	0b00100000
+
+/*************END OF REG_ACCEL_CONFIG CONFIGURATION VALUES********************/
+
+// Configuration values for register REG_GYRO_CONFIG
+
 											// GFS_SEL:GFS_RANGE:LSB SENSITIVITY
 #define GYRO_CONFIG_SCALE_0		0b00000000  // 0:+-250º/s:131LSB/º/S
 #define GYRO_CONFIG_SCALE_1		0b00001000  // 1:+-500º/s:65.5LSB/º/S
 #define GYRO_CONFIG_SCALE_2		0b00010000  // 2:+-1000º/s:32.8LSB/º/S
 #define GYRO_CONFIG_SCALE_3		0b00011000  // 3:+-2000º/s:16.4LSB/º/S
 
-#define GYRO_CONFIG_STEST_X		0b10000000
+#define GYRO_CONFIG_STEST_X		0b10000000	// Self test enables
 #define GYRO_CONFIG_STEST_Y		0b01000000
 #define GYRO_CONFIG_STEST_Z		0b00100000
+
+/*************END OF REG_GYRO_CONFIG CONFIGURATION VALUES**********************/
 
 // MPU6050 Register Map
 #define REG_XA_OFFS_USRH		0x06
@@ -222,29 +252,35 @@ typedef enum {
 
 #define REG_SMPLRT_DIV       	0x19	// S_RATE = G_OUTPUT_RATE / (1 + SMPLRT_DIV)
 #define REG_CONFIG           	0x1A
-#define REG_GYRO_CONFIG      	0x1B	// FS_SEL(1:0) B4:B3
-
+#define REG_GYRO_CONFIG      	0x1B	// GFS_SEL(1:0) B4:B3
 #define REG_ACCEL_CONFIG     	0x1C	// AFS_SEL(1:0) B4:B3
+
 #define REG_FIFO_EN          	0x23
 
 #define REG_I2C_MST_CTRL     	0x24
+
 #define REG_I2C_SLV0_ADDR    	0x25
 #define REG_I2C_SLV0_REG     	0x26
 #define REG_I2C_SLV0_CTRL    	0x27
+
 #define REG_I2C_SLV1_ADDR    	0x28
 #define REG_I2C_SLV1_REG     	0x29
 #define REG_I2C_SLV1_CTRL    	0x2A
+
 #define REG_I2C_SLV2_ADDR    	0x2B
 #define REG_I2C_SLV2_REG     	0x2C
 #define REG_I2C_SLV2_CTRL    	0x2D
+
 #define REG_I2C_SLV3_ADDR    	0x2E
 #define REG_I2C_SLV3_REG     	0x2F
 #define REG_I2C_SLV3_CTRL    	0x30
+
 #define REG_I2C_SLV4_ADDR    	0x31
 #define REG_I2C_SLV4_REG     	0x32
 #define REG_I2C_SLV4_DO      	0x33
 #define REG_I2C_SLV4_CTRL    	0x34
 #define REG_I2C_SLV4_DI      	0x35
+
 #define REG_I2C_MST_STATUS   	0x36
 
 #define REG_INT_PIN_CFG      	0x37
@@ -257,8 +293,10 @@ typedef enum {
 #define REG_ACCEL_YOUT_L     	0x3E
 #define REG_ACCEL_ZOUT_H     	0x3F
 #define REG_ACCEL_ZOUT_L     	0x40
+
 #define REG_TEMP_OUT_H       	0x41
 #define REG_TEMP_OUT_L       	0x42
+
 #define REG_GYRO_XOUT_H      	0x43
 #define REG_GYRO_XOUT_L      	0x44
 #define REG_GYRO_YOUT_H      	0x45
@@ -299,8 +337,10 @@ typedef enum {
 
 #define REG_SIGNAL_PATH_RESET  	0x68
 #define REG_USER_CTRL       	0x6A
+
 #define REG_PWR_MGMT_1      	0x6B
 #define REG_PWR_MGMT_2      	0x6C
+
 #define REG_FIFO_COUNTH     	0x72
 #define REG_FIFO_COUNTL     	0x73
 #define REG_FIFO_R_W        	0x74
