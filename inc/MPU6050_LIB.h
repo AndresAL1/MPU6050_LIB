@@ -2,11 +2,6 @@
  * MPU6050_LIB.h
  * Author: Andres Aguinaga Lopez
  * License: GNU General Public License v3.0
- */
-
-/*
- * Copyright (c) 2024, Andres Aguinaga Lopez
- * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +62,15 @@ typedef struct {
     uint8_t gyroConfig;
 } MPU6050_ConfigTypeDef;
 
+typedef struct {
+	int16_t rawAccelX;
+	int16_t rawAccelY;
+	int16_t rawAccelZ;
 
+	float convertedAccelX;
+	float convertedAccelY;
+	float convertedAccelZ;
+} MPU6050_Accelerations;
 
 // Errors enumeration
 typedef enum {
@@ -81,15 +84,30 @@ typedef enum {
 } InitializationError;
 
 typedef enum {
-	TEST_OK = 0,
+	CONN_OK = 0,
 	ERR_CONN_0
 } ConnectionError;
+
+typedef enum {
+	CONFIG_OK = 0,
+	ERR_CONFIG_ACCEL
+} ConfigurationError;
+
+// Definitions of configuration parameters and constants
+#define GRAVITY_ACCEL			9.80665f // m/s^2
+
+										 // LSB/g
+#define ACCEL_LSB_SEN_0			16384
+#define ACCEL_LSB_SEN_1			8192
+#define ACCEL_LSB_SEN_2			4096
+#define ACCEL_LSB_SEN_3			2048
+
+#define GET_ACCEL_FS_CONFIG		0b00011000
 
 // I2C Configuration
 #define MPU6050_TIMEOUT_MS		100
 
 // MPU6050 Configuration
-
 #define MPU6050_ADDRESS_AD0_L	0x68	// AD0 = 0
 #define MPU6050_ADDRESS_AD0_H	0x69	// AD0 = 1
 
@@ -142,11 +160,11 @@ typedef enum {
 #define STBY_YG_CONFIG_SET		0b00000010
 #define STBY_ZG_CONFIG_SET		0b00000001
 
-											// AFS_SEL		FS_RANGE
-#define ACCEL_CONFIG_SCALE_0	0b00000000  // 0			+-2g
-#define ACCEL_CONFIG_SCALE_1	0b00001000  // 1			+-4g
-#define ACCEL_CONFIG_SCALE_2	0b00010000  // 2			+-8g
-#define ACCEL_CONFIG_SCALE_3	0b00011000  // 3			+-16g
+											// AFS_SEL:FS_RANGE:LSB SENSITIVITY
+#define ACCEL_CONFIG_SCALE_0	0b00000000  // 0:+-2g:16384LSB/g
+#define ACCEL_CONFIG_SCALE_1	0b00001000  // 1:+-4g:8192LSB/g
+#define ACCEL_CONFIG_SCALE_2	0b00010000  // 2:+-8g:4096LSB/g
+#define ACCEL_CONFIG_SCALE_3	0b00011000  // 3:+-16g:2048LSB/g
 
 #define ACCEL_CONFIG_STEST_X	0b10000000
 #define ACCEL_CONFIG_STEST_Y	0b01000000
@@ -162,7 +180,6 @@ typedef enum {
 #define GYRO_CONFIG_STEST_Z		0b00100000
 
 // MPU6050 Register Map
-
 #define REG_SELF_TEST_X      	0x0D
 #define REG_SELF_TEST_Y      	0x0E
 #define REG_SELF_TEST_Z      	0x0F
@@ -255,7 +272,12 @@ typedef enum {
 
 #define REG_WHO_AM_I        	0x75
 
+// FUNCTIONS PROTOTYPES
 uint8_t MPU6050_Init(MPU6050_ConfigTypeDef *config);
 uint8_t MPU6050_Test_Conn(MPU6050_ConfigTypeDef *config);
+uint8_t MPU6050_GetAcceleration(MPU6050_ConfigTypeDef *config , MPU6050_Accelerations *accel);
+
+// FUNCTIONS LIKE-MACROS
+#define MPU6050_RAW_TO_F_ACCEL(rawData, lsbSen) ( ((float)(rawData)/(float)(lsbSen)) * GRAVITY_ACCEL)
 
 #endif /* MPU6050_LIB */
