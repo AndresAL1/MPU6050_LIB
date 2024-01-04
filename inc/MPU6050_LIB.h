@@ -86,6 +86,21 @@ typedef struct {
 	float convertedRotaZ;
 } MPU6050_Rotations;
 
+// MPU6050 Accelerometer Offset structure
+typedef struct {
+    int16_t xOffset;
+    int16_t yOffset;
+    int16_t zOffset;
+} MPU6050_AccelOffsets;
+
+// MPU6050 Gyroscope Offset structure
+typedef struct {
+    int16_t xOffset;
+    int16_t yOffset;
+    int16_t zOffset;
+} MPU6050_GyroOffsets;
+
+
 // Errors enumeration
 typedef enum {
     INIT_OK = 0,
