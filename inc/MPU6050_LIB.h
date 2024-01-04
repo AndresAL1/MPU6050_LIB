@@ -201,6 +201,20 @@ typedef enum {
 #define GYRO_CONFIG_STEST_Z		0b00100000
 
 // MPU6050 Register Map
+#define REG_XA_OFFS_USRH		0x06
+#define REG_XA_OFFS_USRL		0x07
+#define REG_YA_OFFS_USRH		0x08
+#define REG_YA_OFFS_USRL		0x09
+#define REG_ZA_OFFS_USRH		0x0A
+#define REG_ZA_OFFS_USRL		0x0B
+
+#define REG_XG_OFFS_USRH		0x13
+#define REG_XG_OFFS_USRL		0x14
+#define REG_YG_OFFS_USRH		0x15
+#define REG_YG_OFFS_USRL		0x16
+#define REG_ZG_OFFS_USRH		0x17
+#define REG_ZG_OFFS_USRL		0x18
+
 #define REG_SELF_TEST_X      	0x0D
 #define REG_SELF_TEST_Y      	0x0E
 #define REG_SELF_TEST_Z      	0x0F
