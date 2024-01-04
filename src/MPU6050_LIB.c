@@ -130,3 +130,60 @@ uint8_t MPU6050_GetAcceleration(MPU6050_ConfigTypeDef *config , MPU6050_Accelera
 
 	return CONN_OK;
 }
+
+uint8_t MPU6050_GetRotation(MPU6050_ConfigTypeDef *config, MPU6050_Rotations *rota){
+	I2C_HandleTypeDef *handleI2C = config->hi2c;
+	uint8_t addr = config->address;
+	uint8_t gyroConf = config->gyroConfig & GET_GYRO_FS_CONFIG;
+	uint8_t data_L;
+	uint8_t data_H;
+
+	HAL_I2C_Mem_Read(handleI2C, addr<<1, REG_GYRO_XOUT_L, I2C_MEMADD_SIZE_8BIT, &data_L, sizeof(data_L), MPU6050_TIMEOUT_MS);
+	HAL_I2C_Mem_Read(handleI2C, addr<<1, REG_GYRO_XOUT_H, I2C_MEMADD_SIZE_8BIT, &data_H, sizeof(data_H), MPU6050_TIMEOUT_MS);
+	rota->rawRotaX =  (int16_t)(data_H << 8) | data_L;
+
+	HAL_I2C_Mem_Read(handleI2C, addr<<1, REG_GYRO_YOUT_L, I2C_MEMADD_SIZE_8BIT, &data_L, sizeof(data_L), MPU6050_TIMEOUT_MS);
+	HAL_I2C_Mem_Read(handleI2C, addr<<1, REG_GYRO_YOUT_H, I2C_MEMADD_SIZE_8BIT, &data_H, sizeof(data_H), MPU6050_TIMEOUT_MS);
+	rota->rawRotaY =  (int16_t)(data_H << 8) | data_L;
+
+	HAL_I2C_Mem_Read(handleI2C, addr<<1, REG_GYRO_ZOUT_L, I2C_MEMADD_SIZE_8BIT, &data_L, sizeof(data_L), MPU6050_TIMEOUT_MS);
+	HAL_I2C_Mem_Read(handleI2C, addr<<1, REG_GYRO_ZOUT_H, I2C_MEMADD_SIZE_8BIT, &data_H, sizeof(data_H), MPU6050_TIMEOUT_MS);
+	rota->rawRotaZ =  (int16_t)(data_H << 8) | data_L;
+
+	if(CONN_OK != MPU6050_Test_Conn(config)){
+		return ERR_CONN_0;
+	}
+
+	float lsbSen;
+	switch(gyroConf){
+		case GYRO_CONFIG_SCALE_0:
+			lsbSen = GYRO_LSB_SEN_0;
+			break;
+		case GYRO_CONFIG_SCALE_1:
+			lsbSen = GYRO_LSB_SEN_1;
+			break;
+		case GYRO_CONFIG_SCALE_2:
+			lsbSen = GYRO_LSB_SEN_2;
+			break;
+		case GYRO_CONFIG_SCALE_3:
+			lsbSen = GYRO_LSB_SEN_3;
+			break;
+		default:
+			return ERR_CONFIG_GYRO;
+			break;
+	}
+
+	rota->convertedRotaX = MPU6050_RAW_TO_F_DATA(rota->rawRotaX, lsbSen);
+	rota->convertedRotaY = MPU6050_RAW_TO_F_DATA(rota->rawRotaY, lsbSen);
+	rota->convertedRotaZ = MPU6050_RAW_TO_F_DATA(rota->rawRotaZ, lsbSen);
+
+	return CONN_OK;
+}
+
+
+
+
+
+
+
+

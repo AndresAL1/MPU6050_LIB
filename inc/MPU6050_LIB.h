@@ -102,7 +102,8 @@ typedef enum {
 
 typedef enum {
 	CONFIG_OK = 0,
-	ERR_CONFIG_ACCEL
+	ERR_CONFIG_ACCEL,
+	ERR_CONFIG_GYRO
 } ConfigurationError;
 
 // Definitions of configuration parameters and constants
@@ -121,6 +122,8 @@ typedef enum {
 #define GYRO_LSB_SEN_1			65.5f
 #define GYRO_LSB_SEN_2			32.8f
 #define GYRO_LSB_SEN_3			16.4f
+
+#define GET_GYRO_FS_CONFIG		0b00011000
 
 // I2C Configuration
 #define MPU6050_TIMEOUT_MS		100
@@ -293,7 +296,8 @@ typedef enum {
 // FUNCTIONS PROTOTYPES
 uint8_t MPU6050_Init(MPU6050_ConfigTypeDef *config);
 uint8_t MPU6050_Test_Conn(MPU6050_ConfigTypeDef *config);
-uint8_t MPU6050_GetAcceleration(MPU6050_ConfigTypeDef *config , MPU6050_Accelerations *accel);
+uint8_t MPU6050_GetAcceleration(MPU6050_ConfigTypeDef *config, MPU6050_Accelerations *accel);
+uint8_t MPU6050_GetRotation(MPU6050_ConfigTypeDef *config, MPU6050_Rotations *rota);
 
 // FUNCTIONS LIKE-MACROS
 #define MPU6050_RAW_TO_F_DATA(rawData, lsbSen) ( ((float)(rawData)/(float)(lsbSen)) * GRAVITY_ACCEL)
