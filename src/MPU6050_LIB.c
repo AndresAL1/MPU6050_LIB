@@ -124,9 +124,9 @@ uint8_t MPU6050_GetAcceleration(MPU6050_ConfigTypeDef *config , MPU6050_Accelera
 			break;
 	}
 
-	accel->convertedAccelX = MPU6050_RAW_TO_F_ACCEL(accel->rawAccelX, lsbSen);
-	accel->convertedAccelY = MPU6050_RAW_TO_F_ACCEL(accel->rawAccelY, lsbSen);
-	accel->convertedAccelZ = MPU6050_RAW_TO_F_ACCEL(accel->rawAccelZ, lsbSen);
+	accel->convertedAccelX = MPU6050_RAW_TO_F_DATA(accel->rawAccelX, lsbSen);
+	accel->convertedAccelY = MPU6050_RAW_TO_F_DATA(accel->rawAccelY, lsbSen);
+	accel->convertedAccelZ = MPU6050_RAW_TO_F_DATA(accel->rawAccelZ, lsbSen);
 
 	return CONN_OK;
 }

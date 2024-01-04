@@ -62,6 +62,7 @@ typedef struct {
     uint8_t gyroConfig;
 } MPU6050_ConfigTypeDef;
 
+// MPU6050 Acceleration Data structure
 typedef struct {
 	int16_t rawAccelX;
 	int16_t rawAccelY;
@@ -71,6 +72,17 @@ typedef struct {
 	float convertedAccelY;
 	float convertedAccelZ;
 } MPU6050_Accelerations;
+
+// MPU6050 Gyroscope Data structure
+typedef struct {
+	int16_t rawRotaX;
+	int16_t rawRotaY;
+	int16_t rawRotaZ;
+
+	float convertedRotaX;
+	float convertedRotaY;
+	float convertedRotaZ;
+} MPU6050_Rotations;
 
 // Errors enumeration
 typedef enum {
@@ -278,6 +290,6 @@ uint8_t MPU6050_Test_Conn(MPU6050_ConfigTypeDef *config);
 uint8_t MPU6050_GetAcceleration(MPU6050_ConfigTypeDef *config , MPU6050_Accelerations *accel);
 
 // FUNCTIONS LIKE-MACROS
-#define MPU6050_RAW_TO_F_ACCEL(rawData, lsbSen) ( ((float)(rawData)/(float)(lsbSen)) * GRAVITY_ACCEL)
+#define MPU6050_RAW_TO_F_DATA(rawData, lsbSen) ( ((float)(rawData)/(float)(lsbSen)) * GRAVITY_ACCEL)
 
 #endif /* MPU6050_LIB */
