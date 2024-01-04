@@ -123,6 +123,13 @@ typedef enum {
 	ERR_CONFIG_GYRO
 } ConfigurationError;
 
+typedef enum {
+	WRITE_OK = 0,
+	ERR_WRITE_OFF_X,
+	ERR_WRITE_OFF_Y,
+	ERR_WRITE_OFF_Z
+} WritingError;
+
 // Parameters and constants
 #define GRAVITY_ACCEL			9.80665f // m/s^2
 
