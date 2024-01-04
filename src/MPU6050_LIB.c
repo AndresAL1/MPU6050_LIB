@@ -230,6 +230,58 @@ uint8_t MPU6050_GetGyroOffset(MPU6050_ConfigTypeDef *config, MPU6050_GyroOffsets
 	return CONN_OK;
 }
 
+uint8_t MPU6050_SetAccelOffset(MPU6050_ConfigTypeDef *config, MPU6050_AccelOffsets *accelOff) {
+	uint8_t addr = config->address;
+	I2C_HandleTypeDef *handleI2C = config->hi2c;
+	uint8_t data_L;
+	uint8_t data_H;
+	uint8_t checkData;
+
+	data_L = accelOff->xOffset & LOW_BYTE_MASK;
+	HAL_I2C_Mem_Write(handleI2C, addr<<1, REG_XA_OFFS_USRL, I2C_MEMADD_SIZE_8BIT, &data_L, sizeof(data_L), MPU6050_TIMEOUT_MS);
+	HAL_I2C_Mem_Read(handleI2C, addr<<1, REG_XA_OFFS_USRL, I2C_MEMADD_SIZE_8BIT, &checkData, sizeof(checkData), MPU6050_TIMEOUT_MS);
+	if(checkData != data_L){
+		return ERR_WRITE_OFF_X_L;
+	}
+
+	data_H = ((accelOff->xOffset & HIGH_BYTE_MASK) >> (8));
+	HAL_I2C_Mem_Write(handleI2C, addr<<1, REG_XA_OFFS_USRH, I2C_MEMADD_SIZE_8BIT, &data_H, sizeof(data_H), MPU6050_TIMEOUT_MS);
+	HAL_I2C_Mem_Read(handleI2C, addr<<1, REG_XA_OFFS_USRH, I2C_MEMADD_SIZE_8BIT, &checkData, sizeof(checkData), MPU6050_TIMEOUT_MS);
+	if(checkData != data_H){
+		return ERR_WRITE_OFF_X_H;
+	}
+
+	data_L = accelOff->yOffset & LOW_BYTE_MASK;
+	HAL_I2C_Mem_Write(handleI2C, addr<<1, REG_YA_OFFS_USRL, I2C_MEMADD_SIZE_8BIT, &data_L, sizeof(data_L), MPU6050_TIMEOUT_MS);
+	HAL_I2C_Mem_Read(handleI2C, addr<<1, REG_YA_OFFS_USRL, I2C_MEMADD_SIZE_8BIT, &checkData, sizeof(checkData), MPU6050_TIMEOUT_MS);
+	if(checkData != data_L){
+		return ERR_WRITE_OFF_Y_L;
+	}
+
+	data_H = ((accelOff->yOffset & HIGH_BYTE_MASK) >> (8));
+	HAL_I2C_Mem_Write(handleI2C, addr<<1, REG_YA_OFFS_USRH, I2C_MEMADD_SIZE_8BIT, &data_H, sizeof(data_H), MPU6050_TIMEOUT_MS);
+	HAL_I2C_Mem_Read(handleI2C, addr<<1, REG_YA_OFFS_USRH, I2C_MEMADD_SIZE_8BIT, &checkData, sizeof(checkData), MPU6050_TIMEOUT_MS);
+	if(checkData != data_H){
+		return ERR_WRITE_OFF_Y_H;
+	}
+
+	data_L = accelOff->zOffset & LOW_BYTE_MASK;
+	HAL_I2C_Mem_Write(handleI2C, addr<<1, REG_ZA_OFFS_USRL, I2C_MEMADD_SIZE_8BIT, &data_L, sizeof(data_L), MPU6050_TIMEOUT_MS);
+	HAL_I2C_Mem_Read(handleI2C, addr<<1, REG_ZA_OFFS_USRL, I2C_MEMADD_SIZE_8BIT, &checkData, sizeof(checkData), MPU6050_TIMEOUT_MS);
+	if(checkData != data_L){
+		return ERR_WRITE_OFF_Z_L;
+	}
+
+	data_H = ((accelOff->zOffset & HIGH_BYTE_MASK) >> (8));
+	HAL_I2C_Mem_Write(handleI2C, addr<<1, REG_ZA_OFFS_USRH, I2C_MEMADD_SIZE_8BIT, &data_H, sizeof(data_H), MPU6050_TIMEOUT_MS);
+	HAL_I2C_Mem_Read(handleI2C, addr<<1, REG_ZA_OFFS_USRH, I2C_MEMADD_SIZE_8BIT, &checkData, sizeof(checkData), MPU6050_TIMEOUT_MS);
+	if(checkData != data_H){
+		return ERR_WRITE_OFF_Z_H;
+	}
+
+	return WRITE_OK;
+}
+
 
 
 
