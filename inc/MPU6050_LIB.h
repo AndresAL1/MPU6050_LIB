@@ -116,6 +116,12 @@ typedef enum {
 
 #define GET_ACCEL_FS_CONFIG		0b00011000
 
+										// LSB/º/S
+#define GYRO_LSB_SEN_0			131.0f
+#define GYRO_LSB_SEN_1			65.5f
+#define GYRO_LSB_SEN_2			32.8f
+#define GYRO_LSB_SEN_3			16.4f
+
 // I2C Configuration
 #define MPU6050_TIMEOUT_MS		100
 
@@ -181,11 +187,11 @@ typedef enum {
 #define ACCEL_CONFIG_STEST_X	0b10000000
 #define ACCEL_CONFIG_STEST_Y	0b01000000
 #define ACCEL_CONFIG_STEST_Z	0b00100000
-											// FS_SEL		FS_RANGE
-#define GYRO_CONFIG_SCALE_0		0b00000000  // 0			+-250º/s
-#define GYRO_CONFIG_SCALE_1		0b00001000  // 1			+-500º/s
-#define GYRO_CONFIG_SCALE_2		0b00010000  // 2			+-1000º/s
-#define GYRO_CONFIG_SCALE_3		0b00011000  // 3			+-2000º/s
+											// GFS_SEL:GFS_RANGE:LSB SENSITIVITY
+#define GYRO_CONFIG_SCALE_0		0b00000000  // 0:+-250º/s:131LSB/º/S
+#define GYRO_CONFIG_SCALE_1		0b00001000  // 1:+-500º/s:65.5LSB/º/S
+#define GYRO_CONFIG_SCALE_2		0b00010000  // 2:+-1000º/s:32.8LSB/º/S
+#define GYRO_CONFIG_SCALE_3		0b00011000  // 3:+-2000º/s:16.4LSB/º/S
 
 #define GYRO_CONFIG_STEST_X		0b10000000
 #define GYRO_CONFIG_STEST_Y		0b01000000
