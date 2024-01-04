@@ -385,6 +385,7 @@ uint8_t MPU6050_GetAccelOffset(MPU6050_ConfigTypeDef *config, MPU6050_AccelOffse
 uint8_t MPU6050_GetGyroOffset(MPU6050_ConfigTypeDef *config, MPU6050_GyroOffsets *gyroOff);
 
 uint8_t MPU6050_SetAccelOffset(MPU6050_ConfigTypeDef *config, MPU6050_AccelOffsets *accelOff);
+uint8_t MPU6050_SetGyroOffset(MPU6050_ConfigTypeDef *config, MPU6050_GyroOffsets *gyroOff);
 
 // FUNCTIONS LIKE-MACROS
 #define MPU6050_RAW_TO_F_DATA(rawData, lsbSen) ( ((float)(rawData)/(float)(lsbSen)) * GRAVITY_ACCEL)
