@@ -379,6 +379,7 @@ typedef enum {
 uint8_t MPU6050_Init(MPU6050_ConfigTypeDef *config);
 uint8_t MPU6050_Test_Conn(MPU6050_ConfigTypeDef *config);
 uint16_t MPU6050_GetAccelSensitivity(MPU6050_ConfigTypeDef *config);
+float MPU6050_GetGyroSensitivty(MPU6050_ConfigTypeDef *config);
 
 uint8_t MPU6050_GetAcceleration(MPU6050_ConfigTypeDef *config, MPU6050_Accelerations *accel);
 uint8_t MPU6050_GetRotation(MPU6050_ConfigTypeDef *config, MPU6050_Rotations *rota);
