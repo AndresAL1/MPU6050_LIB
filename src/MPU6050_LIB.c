@@ -82,6 +82,28 @@ uint8_t MPU6050_Test_Conn(MPU6050_ConfigTypeDef *config) {
 	}
 }
 
+uint16_t MPU6050_GetAccelSensitivity(MPU6050_ConfigTypeDef *config) {
+	uint8_t accelConf = config->accelConfig & GET_ACCEL_FS_CONFIG;
+
+	switch(accelConf){
+		case ACCEL_CONFIG_SCALE_0:
+			return ACCEL_LSB_SEN_0;
+			break;
+		case ACCEL_CONFIG_SCALE_1:
+			return ACCEL_LSB_SEN_1;
+			break;
+		case ACCEL_CONFIG_SCALE_2:
+			return ACCEL_LSB_SEN_2;
+			break;
+		case ACCEL_CONFIG_SCALE_3:
+			return ACCEL_LSB_SEN_3;
+			break;
+		default:
+			return ERR_CONFIG_ACCEL;
+			break;
+	}
+}
+
 uint8_t MPU6050_GetAcceleration(MPU6050_ConfigTypeDef *config , MPU6050_Accelerations *accel) {
 	I2C_HandleTypeDef *handleI2C = config->hi2c;
 	uint8_t addr = config->address;
@@ -105,24 +127,7 @@ uint8_t MPU6050_GetAcceleration(MPU6050_ConfigTypeDef *config , MPU6050_Accelera
 	HAL_I2C_Mem_Read(handleI2C, addr<<1, REG_ACCEL_ZOUT_H, I2C_MEMADD_SIZE_8BIT, &data_H, sizeof(data_H), MPU6050_TIMEOUT_MS);
 	accel->rawAccelZ =  (int16_t)(data_H << 8) | data_L;
 
-	uint16_t lsbSen;
-	switch(accelConf){
-		case ACCEL_CONFIG_SCALE_0:
-			lsbSen = ACCEL_LSB_SEN_0;
-			break;
-		case ACCEL_CONFIG_SCALE_1:
-			lsbSen = ACCEL_LSB_SEN_1;
-			break;
-		case ACCEL_CONFIG_SCALE_2:
-			lsbSen = ACCEL_LSB_SEN_2;
-			break;
-		case ACCEL_CONFIG_SCALE_3:
-			lsbSen = ACCEL_LSB_SEN_3;
-			break;
-		default:
-			return ERR_CONFIG_ACCEL;
-			break;
-	}
+	uint16_t lsbSen = MPU6050_GetAccelSensitivity(config);
 
 	accel->convertedAccelX = MPU6050_RAW_TO_F_DATA(accel->rawAccelX, lsbSen);
 	accel->convertedAccelY = MPU6050_RAW_TO_F_DATA(accel->rawAccelY, lsbSen);
