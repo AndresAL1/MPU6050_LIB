@@ -353,6 +353,10 @@ uint8_t MPU6050_CalibAccel(MPU6050_ConfigTypeDef *config, float calibTolerance) 
     int32_t avgAccelY = 0;
     int32_t avgAccelZ = 0;
 
+    if(calibTolerance <= 0 || calibTolerance > 1){
+    	return ERR_CALIB_INVALID_TOLERANCE;
+    }
+
     MPU6050_GetAccelOffset(config, &accelOff);
 
     uint16_t lsbSen = MPU6050_GetAccelSensitivity(config);
@@ -381,7 +385,7 @@ uint8_t MPU6050_CalibAccel(MPU6050_ConfigTypeDef *config, float calibTolerance) 
 
         if (ABS(avgAccelX) <= maxStableError && ABS(avgAccelY) <= maxStableError && ABS(avgAccelZ - lsbSen) <= maxStableError) {
             MPU6050_SetAccelOffset(config, &accelOff);
-            return ACCEL_CALIB_OK;
+            return CALIB_OK;
         } else {
             if (avgAccelX > 0) {
                 accelOff.xOffset--;
@@ -407,7 +411,7 @@ uint8_t MPU6050_CalibAccel(MPU6050_ConfigTypeDef *config, float calibTolerance) 
         iterationsCount++;
     }
 
-    return ACCEL_CALIB_TIMEOUT;
+    return CALIB_TIMEOUT;
 }
 
 uint8_t MPU6050_CalibGyro(MPU6050_ConfigTypeDef *config, float calibTolerance) {
@@ -420,6 +424,10 @@ uint8_t MPU6050_CalibGyro(MPU6050_ConfigTypeDef *config, float calibTolerance) {
     int32_t avgRotaX = 0;
     int32_t avgRotaY = 0;
     int32_t avgRotaZ = 0;
+
+    if(calibTolerance <= 0 || calibTolerance > 1){
+    	return ERR_CALIB_INVALID_TOLERANCE;
+    }
 
     MPU6050_GetGyroOffset(config, &gyroOff);
 
@@ -449,7 +457,7 @@ uint8_t MPU6050_CalibGyro(MPU6050_ConfigTypeDef *config, float calibTolerance) {
 
         if (ABS(avgRotaX) <= maxStableError && ABS(avgRotaY) <= maxStableError && ABS(avgRotaZ) <= maxStableError) {
             MPU6050_SetGyroOffset(config, &gyroOff);
-            return GYRO_CALIB_OK;
+            return CALIB_OK;
         } else {
             if (avgRotaX > 0) {
                 gyroOff.xOffset--;
@@ -475,7 +483,7 @@ uint8_t MPU6050_CalibGyro(MPU6050_ConfigTypeDef *config, float calibTolerance) {
         iterationsCount++;
     }
 
-    return GYRO_CALIB_TIMEOUT;
+    return CALIB_TIMEOUT;
 }
 
 

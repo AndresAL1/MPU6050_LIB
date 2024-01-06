@@ -133,15 +133,10 @@ typedef enum {
 } WritingError;
 
 typedef enum {
-	ACCEL_CALIB_OK,
-	ACCEL_CALIB_TIMEOUT
-} AccelCalibrationError;
-
-typedef enum {
-	GYRO_CALIB_OK,
-	GYRO_CALIB_TIMEOUT
-} GyroCalibrationError;
-
+	CALIB_OK,
+	CALIB_TIMEOUT,
+	ERR_CALIB_INVALID_TOLERANCE
+} CalibrationError;
 
 // Parameters and constants
 #define TRUE						1
