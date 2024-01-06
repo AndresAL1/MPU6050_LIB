@@ -342,6 +342,76 @@ uint8_t MPU6050_SetGyroOffset(MPU6050_ConfigTypeDef *config, MPU6050_GyroOffsets
 	return WRITE_OK;
 }
 
+uint8_t MPU6050_CalibAccel(MPU6050_ConfigTypeDef *config, float calibTolerance) {
+    uint32_t readingsCount = 0;
+    uint32_t iterationsCount = 0;
+
+    MPU6050_Accelerations accel;
+    MPU6050_AccelOffsets accelOff;
+
+    int32_t avgAccelX = 0;
+    int32_t avgAccelY = 0;
+    int32_t avgAccelZ = 0;
+
+    MPU6050_GetAccelOffset(config, &accelOff);
+
+    uint16_t lsbSen = MPU6050_GetAccelSensitivity(config);
+
+    uint16_t maxStableError = (uint16_t)(calibTolerance * lsbSen);
+
+    while (iterationsCount < MPU6050_MAX_CALIB_ITERATIONS) {
+        readingsCount = 0;
+        avgAccelX = 0;
+        avgAccelY = 0;
+        avgAccelZ = 0;
+
+        while (readingsCount < MPU6050_NUM_CALIB_READINGS) {
+            MPU6050_GetAcceleration(config, &accel);
+
+            avgAccelX += accel.rawAccelX;
+            avgAccelY += accel.rawAccelY;
+            avgAccelZ += accel.rawAccelZ;
+
+            readingsCount++;
+        }
+
+        avgAccelX /= MPU6050_NUM_CALIB_READINGS;
+        avgAccelY /= MPU6050_NUM_CALIB_READINGS;
+        avgAccelZ /= MPU6050_NUM_CALIB_READINGS;
+
+        if (ABS(avgAccelX) <= maxStableError && ABS(avgAccelY) <= maxStableError && ABS(avgAccelZ - lsbSen) <= maxStableError) {
+            MPU6050_SetAccelOffset(config, &accelOff);
+            return ACCEL_CALIB_OK;
+        } else {
+            if (avgAccelX > 0) {
+                accelOff.xOffset--;
+            } else {
+                accelOff.xOffset++;
+            }
+
+            if (avgAccelY > 0) {
+                accelOff.yOffset--;
+            } else {
+                accelOff.yOffset++;
+            }
+
+            if ((avgAccelZ - lsbSen) > 0) {
+                accelOff.zOffset--;
+            } else {
+                accelOff.zOffset++;
+            }
+
+            MPU6050_SetAccelOffset(config, &accelOff);
+        }
+
+        iterationsCount++;
+    }
+
+    return ACCEL_CALIB_TIMEOUT;
+}
+
+
+
 
 
 

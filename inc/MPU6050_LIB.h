@@ -132,29 +132,41 @@ typedef enum {
 	ERR_WRITE_OFF_Z_H
 } WritingError;
 
+typedef enum {
+	ACCEL_CALIB_OK,
+	ACCEL_CALIB_TIMEOUT
+} AccelCalibrationError;
+
 // Parameters and constants
-#define GRAVITY_ACCEL			9.80665f // m/s^2
+#define TRUE						1
+#define FALSE						0
 
-#define ACCEL_LSB_SEN_0			16384	// LSB/g
-#define ACCEL_LSB_SEN_1			8192
-#define ACCEL_LSB_SEN_2			4096
-#define ACCEL_LSB_SEN_3			2048
+#define GRAVITY_ACCEL				9.80665f // m/s^2
 
-#define GET_ACCEL_FS_CONFIG		0b00011000	// BitMask to get AFS bits
+#define ACCEL_LSB_SEN_0				16384	// LSB/g
+#define ACCEL_LSB_SEN_1				8192
+#define ACCEL_LSB_SEN_2				4096
+#define ACCEL_LSB_SEN_3				2048
 
-#define GYRO_LSB_SEN_0			131.0f	// LSB/º/S
-#define GYRO_LSB_SEN_1			65.5f
-#define GYRO_LSB_SEN_2			32.8f
-#define GYRO_LSB_SEN_3			16.4f
+#define GET_ACCEL_FS_CONFIG			0b00011000	// BitMask to get AFS bits
 
-#define GET_GYRO_FS_CONFIG		0b00011000	// BitMask to get GFS bits
+#define GYRO_LSB_SEN_0				131.0f	// LSB/º/S
+#define GYRO_LSB_SEN_1				65.5f
+#define GYRO_LSB_SEN_2				32.8f
+#define GYRO_LSB_SEN_3				16.4f
 
-#define LOW_BYTE_MASK 			0xFF
-#define HIGH_BYTE_MASK 			0xFF00
+#define GET_GYRO_FS_CONFIG			0b00011000	// BitMask to get GFS bits
+
+#define LOW_BYTE_MASK 				0xFF
+#define HIGH_BYTE_MASK 				0xFF00
 
 /********END OF PARAMETERS AND CONSTANTS*********/
 
 // Definitions of configuration values
+
+// Calibration Configuration
+#define MPU6050_MAX_CALIB_ITERATIONS 1000
+#define MPU6050_NUM_CALIB_READINGS	 100
 
 // I2C Configuration
 #define MPU6050_TIMEOUT_MS		100
@@ -378,18 +390,23 @@ typedef enum {
 // FUNCTIONS PROTOTYPES
 uint8_t MPU6050_Init(MPU6050_ConfigTypeDef *config);
 uint8_t MPU6050_Test_Conn(MPU6050_ConfigTypeDef *config);
+
 uint16_t MPU6050_GetAccelSensitivity(MPU6050_ConfigTypeDef *config);
 float MPU6050_GetGyroSensitivty(MPU6050_ConfigTypeDef *config);
 
 uint8_t MPU6050_GetAcceleration(MPU6050_ConfigTypeDef *config, MPU6050_Accelerations *accel);
 uint8_t MPU6050_GetRotation(MPU6050_ConfigTypeDef *config, MPU6050_Rotations *rota);
+
 uint8_t MPU6050_GetAccelOffset(MPU6050_ConfigTypeDef *config, MPU6050_AccelOffsets *accelOff);
 uint8_t MPU6050_GetGyroOffset(MPU6050_ConfigTypeDef *config, MPU6050_GyroOffsets *gyroOff);
 
 uint8_t MPU6050_SetAccelOffset(MPU6050_ConfigTypeDef *config, MPU6050_AccelOffsets *accelOff);
 uint8_t MPU6050_SetGyroOffset(MPU6050_ConfigTypeDef *config, MPU6050_GyroOffsets *gyroOff);
 
+uint8_t MPU6050_CalibAccel(MPU6050_ConfigTypeDef *config, float calibTolerance);
+
 // FUNCTIONS LIKE-MACROS
+#define ABS(x) ((x) < 0 ? -(x) : (x))
 #define MPU6050_RAW_TO_F_DATA(rawData, lsbSen) ( ((float)(rawData)/(float)(lsbSen)) * GRAVITY_ACCEL)
 
 #endif /* MPU6050_LIB */
