@@ -137,6 +137,12 @@ typedef enum {
 	ACCEL_CALIB_TIMEOUT
 } AccelCalibrationError;
 
+typedef enum {
+	GYRO_CALIB_OK,
+	GYRO_CALIB_TIMEOUT
+} GyroCalibrationError;
+
+
 // Parameters and constants
 #define TRUE						1
 #define FALSE						0
@@ -165,8 +171,11 @@ typedef enum {
 // Definitions of configuration values
 
 // Calibration Configuration
-#define ACCEL_MAX_CALIB_ITERATIONS 1000
-#define ACCEL_NUM_CALIB_READINGS	 100
+#define ACCEL_MAX_CALIB_ITERATIONS 	1000
+#define ACCEL_NUM_CALIB_READINGS	100
+
+#define GYRO_MAX_CALIB_ITERATIONS 	1000
+#define GYRO_NUM_CALIB_READINGS		100
 
 // I2C Configuration
 #define MPU6050_TIMEOUT_MS		100
