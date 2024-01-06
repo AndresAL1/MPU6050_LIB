@@ -97,3 +97,62 @@ If the initialization is successful, the function returns `INIT_OK`. Otherwise, 
 3. `pwrMgmt2Config (REG_PWR_MGMT_2)`
 4. `accelConfig (REG_ACCEL_CONFIG)`
 5. `gyroConfig (REG_GYRI_CONFIG)`
+
+## Sensor Data Reading
+
+To use the MPU6050 library functions, you need to initialize structures for storing sensor data. The definition for the structures can be found in the header file:
+
+```c
+// MPU6050 Acceleration Data structure
+typedef struct {
+    int16_t rawAccelX;
+    int16_t rawAccelY;
+    int16_t rawAccelZ;
+
+    float convertedAccelX;
+    float convertedAccelY;
+    float convertedAccelZ;
+} MPU6050_Accelerations;
+
+// MPU6050 Gyroscope Data structure
+typedef struct {
+    int16_t rawRotaX;
+    int16_t rawRotaY;
+    int16_t rawRotaZ;
+
+    float convertedRotaX;
+    float convertedRotaY;
+    float convertedRotaZ;
+} MPU6050_Rotations;
+
+// MPU6050 Temperature Data structure
+typedef struct {
+    int16_t rawTemp;
+    float convertedTemp;
+} MPU6050_Temperature;
+```
+
+## Example initializations:
+The following are examples of how to define data structures:
+```c
+MPU6050_Accelerations mpu6050Accel;
+MPU6050_Rotations mpu6050Rota;
+MPU6050_Temperature mpu6050Temp;
+```
+
+## Examples of reading values using functions:
+```c
+checkAccel = MPU6050_GetAcceleration(&mpu6050, &mpu6050Accel);
+checkRota  = MPU6050_GetRotation(&mpu6050, &mpu6050Rota);
+checkTemp = MPU6050_GetTemperature(&mpu6050, &mpu6050Temp);
+```
+
+## Accessing individual data:
+```c
+float ax = mpu6050Accel.convertedAccelX;
+int16_t axRaw = mpu6050Accel.rawAccelX;
+float temp = mpu6050Temp.convertedTemp;
+int16_t tempRaw = mpu6050Temp.rawTemp;
+```
+
+The functions return the enumeration value `CONN_OK` indicating successful reading. In case of no connection, `ERR_CONN_0` is returned. For temperature readings, if the temperature sensor is disabled in the configuration register `REG_PWR_MGMT_1`, `ERR_TEMP_DISABLED` is returned.
