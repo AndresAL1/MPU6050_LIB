@@ -86,6 +86,13 @@ typedef struct {
 	float convertedRotaZ;
 } MPU6050_Rotations;
 
+// MPU6050 Temperature Data structure
+
+typedef struct {
+	int16_t rawTemp;
+	float convertedTemp;
+} MPU6050_Temperature;
+
 // MPU6050 Accelerometer Offset structure
 typedef struct {
     int16_t xOffset;
@@ -119,7 +126,8 @@ typedef enum {
 typedef enum {
 	CONFIG_OK = 0,
 	ERR_CONFIG_ACCEL = 2,
-	ERR_CONFIG_GYRO
+	ERR_CONFIG_GYRO,
+	ERR_TEMP_DISABLED
 } ConfigurationError;
 
 typedef enum {
