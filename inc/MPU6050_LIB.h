@@ -165,8 +165,8 @@ typedef enum {
 // Definitions of configuration values
 
 // Calibration Configuration
-#define MPU6050_MAX_CALIB_ITERATIONS 1000
-#define MPU6050_NUM_CALIB_READINGS	 100
+#define ACCEL_MAX_CALIB_ITERATIONS 1000
+#define ACCEL_NUM_CALIB_READINGS	 100
 
 // I2C Configuration
 #define MPU6050_TIMEOUT_MS		100

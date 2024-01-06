@@ -359,13 +359,13 @@ uint8_t MPU6050_CalibAccel(MPU6050_ConfigTypeDef *config, float calibTolerance) 
 
     uint16_t maxStableError = (uint16_t)(calibTolerance * lsbSen);
 
-    while (iterationsCount < MPU6050_MAX_CALIB_ITERATIONS) {
+    while (iterationsCount < ACCEL_MAX_CALIB_ITERATIONS) {
         readingsCount = 0;
         avgAccelX = 0;
         avgAccelY = 0;
         avgAccelZ = 0;
 
-        while (readingsCount < MPU6050_NUM_CALIB_READINGS) {
+        while (readingsCount < ACCEL_NUM_CALIB_READINGS) {
             MPU6050_GetAcceleration(config, &accel);
 
             avgAccelX += accel.rawAccelX;
@@ -375,9 +375,9 @@ uint8_t MPU6050_CalibAccel(MPU6050_ConfigTypeDef *config, float calibTolerance) 
             readingsCount++;
         }
 
-        avgAccelX /= MPU6050_NUM_CALIB_READINGS;
-        avgAccelY /= MPU6050_NUM_CALIB_READINGS;
-        avgAccelZ /= MPU6050_NUM_CALIB_READINGS;
+        avgAccelX /= ACCEL_NUM_CALIB_READINGS;
+        avgAccelY /= ACCEL_NUM_CALIB_READINGS;
+        avgAccelZ /= ACCEL_NUM_CALIB_READINGS;
 
         if (ABS(avgAccelX) <= maxStableError && ABS(avgAccelY) <= maxStableError && ABS(avgAccelZ - lsbSen) <= maxStableError) {
             MPU6050_SetAccelOffset(config, &accelOff);
