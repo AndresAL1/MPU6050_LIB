@@ -413,6 +413,7 @@ uint8_t MPU6050_SetAccelOffset(MPU6050_ConfigTypeDef *config, MPU6050_AccelOffse
 uint8_t MPU6050_SetGyroOffset(MPU6050_ConfigTypeDef *config, MPU6050_GyroOffsets *gyroOff);
 
 uint8_t MPU6050_CalibAccel(MPU6050_ConfigTypeDef *config, float calibTolerance);
+uint8_t MPU6050_CalibGyro(MPU6050_ConfigTypeDef *config, float calibTolerance);
 
 // FUNCTIONS LIKE-MACROS
 #define ABS(x) ((x) < 0 ? -(x) : (x))

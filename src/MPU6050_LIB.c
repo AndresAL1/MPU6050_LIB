@@ -357,7 +357,7 @@ uint8_t MPU6050_CalibAccel(MPU6050_ConfigTypeDef *config, float calibTolerance) 
 
     uint16_t lsbSen = MPU6050_GetAccelSensitivity(config);
 
-    uint16_t maxStableError = (uint16_t)(calibTolerance * lsbSen);
+    uint16_t maxStableError = (uint16_t)(calibTolerance * lsbSen);	// 1g m/s^2
 
     while (iterationsCount < ACCEL_MAX_CALIB_ITERATIONS) {
         readingsCount = 0;
@@ -410,7 +410,73 @@ uint8_t MPU6050_CalibAccel(MPU6050_ConfigTypeDef *config, float calibTolerance) 
     return ACCEL_CALIB_TIMEOUT;
 }
 
+uint8_t MPU6050_CalibGyro(MPU6050_ConfigTypeDef *config, float calibTolerance) {
+    uint32_t readingsCount = 0;
+    uint32_t iterationsCount = 0;
 
+    MPU6050_Rotations rota;
+    MPU6050_GyroOffsets gyroOff;
+
+    int32_t avgRotaX = 0;
+    int32_t avgRotaY = 0;
+    int32_t avgRotaZ = 0;
+
+    MPU6050_GetGyroOffset(config, &gyroOff);
+
+    uint16_t lsbSen = MPU6050_GetGyroOffset(config, &gyroOff);
+
+    uint16_t maxStableError = (uint16_t)(calibTolerance * lsbSen * 125);	// 125º/s
+
+    while (iterationsCount < GYRO_MAX_CALIB_ITERATIONS) {
+        readingsCount = 0;
+        avgRotaX = 0;
+        avgRotaY = 0;
+        avgRotaZ = 0;
+
+        while (readingsCount < GYRO_NUM_CALIB_READINGS) {
+            MPU6050_GetRotation(config, &rota);
+
+            avgRotaX += rota.rawRotaX;
+            avgRotaY += rota.rawRotaY;
+            avgRotaZ += rota.rawRotaZ;
+
+            readingsCount++;
+        }
+
+        avgRotaX /= GYRO_NUM_CALIB_READINGS;
+        avgRotaY /= GYRO_NUM_CALIB_READINGS;
+        avgRotaZ /= GYRO_NUM_CALIB_READINGS;
+
+        if (ABS(avgRotaX) <= maxStableError && ABS(avgRotaY) <= maxStableError && ABS(avgRotaZ) <= maxStableError) {
+            MPU6050_SetGyroOffset(config, &gyroOff);
+            return GYRO_CALIB_OK;
+        } else {
+            if (avgRotaX > 0) {
+                gyroOff.xOffset--;
+            } else {
+                gyroOff.xOffset++;
+            }
+
+            if (avgRotaY > 0) {
+                gyroOff.yOffset--;
+            } else {
+                gyroOff.yOffset++;
+            }
+
+            if (avgRotaZ > 0) {
+                gyroOff.zOffset--;
+            } else {
+                gyroOff.zOffset++;
+            }
+
+            MPU6050_SetGyroOffset(config, &gyroOff);
+        }
+
+        iterationsCount++;
+    }
+
+    return GYRO_CALIB_TIMEOUT;
+}
 
 
 
