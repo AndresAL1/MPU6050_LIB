@@ -188,6 +188,30 @@ uint8_t MPU6050_GetRotation(MPU6050_ConfigTypeDef *config, MPU6050_Rotations *ro
 	return CONN_OK;
 }
 
+uint8_t MPU6050_GetTemperature(MPU6050_ConfigTypeDef *config, MPU6050_Temperature *temp) {
+	I2C_HandleTypeDef *handleI2C = config->hi2c;
+	uint8_t addr = config->address;
+	uint8_t data_L;
+	uint8_t data_H;
+
+	if(TEMP_DIS_CONFIG_SET == (config->pwrMgmt1Config & TEMP_DIS_CONFIG_SET)){
+		return ERR_TEMP_DISABLED;
+	}
+
+	if(CONN_OK != MPU6050_Test_Conn(config)){
+		return ERR_CONN_0;
+	}
+
+	HAL_I2C_Mem_Read(handleI2C, addr<<1, REG_TEMP_OUT_L, I2C_MEMADD_SIZE_8BIT, &data_L, sizeof(data_L), MPU6050_TIMEOUT_MS);
+	HAL_I2C_Mem_Read(handleI2C, addr<<1, REG_TEMP_OUT_H, I2C_MEMADD_SIZE_8BIT, &data_H, sizeof(data_H), MPU6050_TIMEOUT_MS);
+	temp->rawTemp =  (int16_t)(data_H << 8) | data_L;
+
+	float convTemp = (float)(temp->rawTemp / 340) + 36.54;
+	temp->convertedTemp = convTemp;
+
+	return CONN_OK;
+}
+
 uint8_t MPU6050_GetAccelOffset(MPU6050_ConfigTypeDef *config, MPU6050_AccelOffsets *accelOff) {
 	uint8_t addr = config->address;
 	I2C_HandleTypeDef *handleI2C = config->hi2c;

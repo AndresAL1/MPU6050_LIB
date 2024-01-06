@@ -408,6 +408,7 @@ float MPU6050_GetGyroSensitivty(MPU6050_ConfigTypeDef *config);
 
 uint8_t MPU6050_GetAcceleration(MPU6050_ConfigTypeDef *config, MPU6050_Accelerations *accel);
 uint8_t MPU6050_GetRotation(MPU6050_ConfigTypeDef *config, MPU6050_Rotations *rota);
+uint8_t MPU6050_GetTemperature(MPU6050_ConfigTypeDef *config, MPU6050_Temperature *temp);
 
 uint8_t MPU6050_GetAccelOffset(MPU6050_ConfigTypeDef *config, MPU6050_AccelOffsets *accelOff);
 uint8_t MPU6050_GetGyroOffset(MPU6050_ConfigTypeDef *config, MPU6050_GyroOffsets *gyroOff);
